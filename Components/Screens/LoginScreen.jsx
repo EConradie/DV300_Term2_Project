@@ -1,43 +1,169 @@
-import React from 'react'
-import { View, Text, StyleSheet, ScrollView, Image} from 'react-native'
-
-import { Colors } from '../Styles'
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  ImageBackground,
+  Image,
+  TextInput,
+} from "react-native";
+import BackgroundImage from "../../assets/Images/SplashImage.jpg";
+import LogoImage from "../../assets/Icons/logo-name.png";
+import { Colors } from "../Styles";
+import { Ionicons } from "@expo/vector-icons";
 
 export const LoginScreen = () => {
- 
-    return (
-      <ScrollView style={MainStyles.scrollContainer}>
-        <View style={MainStyles.container}>
-            <View style={MainStyles.header}>
-                <Image source={require('../../assets/Icons/logo-name.svg')} style={MainStyles.logo} />
-            </View>
-        </View>
-        </ScrollView>
-    )
-}
+  return (
+    <ImageBackground source={BackgroundImage} style={LoginStyles.background}>
+      <View style={LoginStyles.overlay}>
+        <View style={LoginStyles.container}>
+          <Image source={LogoImage} style={LoginStyles.logo} />
 
-const MainStyles = StyleSheet.create({
- container: {
-    display: 'flex',
-    flexDirection: 'column',
+          {/* EMAIL INPUT */}
+          <View style={InputStyle.container}>
+            <Ionicons
+              name="mail-outline"
+              size={24}
+              color={Colors.icon}
+              style={InputStyle.Icon}
+            />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="white"
+              style={InputStyle.input}
+            />
+          </View>
+
+          {/* PASSWORD INPUT */}
+          <View style={InputStyle.container}>
+            <Ionicons
+              name="lock-closed-outline"
+              size={24}
+              color={Colors.icon}
+              style={InputStyle.Icon}
+            />
+            <TextInput
+              placeholder="Password"
+              secureTextEntry
+              autoCorrect={false}
+              placeholderTextColor="white"
+              style={InputStyle.input}
+            />
+          </View>
+
+          {/* BUTTON */}
+
+          <Pressable style={LoginStyles.button}>
+            <Text style={LoginStyles.buttonText}>LOG IN</Text>
+          </Pressable>
+
+          {/* UNDERLINE */}
+
+          <View style={LoginStyles.underline}>
+            <Text style={LoginStyles.underlineText}>
+              Don't have and account?
+            </Text>
+            <Pressable style={LoginStyles.underlineButton}>
+              <Text style={LoginStyles.underlineButtonText}>Sign up</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </ImageBackground>
+  );
+};
+
+const InputStyle = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "auto",
+    height: 60,
+    width: "100%",
+    borderRadius: 5,
+    color: Colors.white,
+    backgroundColor: "rgba(35, 35, 37, 0.9)",
+    borderWidth: 2,
+    borderColor: "#323234",
+    gap: 20,
+    paddingLeft: 20,
+  },
+  Icon: {},
+  input: {
+    color: Colors.white,
+    alignSelf: "center",
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    paddingLeft: 65,
+  },
+});
+
+const LoginStyles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
     flex: 1,
+    alignItems: "center",
     marginTop: 65,
     marginLeft: 30,
     marginRight: 30,
     marginBottom: 30,
+    gap: 20,
   },
-  header: {
-    gap: 0
+  background: {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
   },
-  input: {
-    gap: 5
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '500',
+  text: {
+    color: Colors.white,
   },
- 
-})
-
-
-
+  logo: {
+    width: 200,
+    height: 50,
+    marginBottom: 50,
+    marginTop: 110,
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: 60,
+    borderRadius: 5,
+    backgroundColor: Colors.orange,
+  },
+  buttonText: {
+    color: Colors.white,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  underline: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+  },
+  underlineText: {
+    color: Colors.white,
+    fontSize: 16,
+  },
+  underlineButtonText: {
+    color: Colors.orange,
+    fontSize: 16,
+  },
+});

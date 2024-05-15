@@ -9,7 +9,7 @@ import {
   Image
 } from "react-native";
 import BackgroundImage from "../../assets/Images/SplashImage.jpg";
-import LogoImage from "../../assets/Icons/logo-name.svg";
+import LogoImage from "../../assets/Icons/logo-name.png";
 import { Colors } from "../Styles";
 
 export const SplashScreen = () => {
@@ -43,13 +43,13 @@ const SplashStyles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Black with 50% opacity
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   text:{
     color: Colors.white
   },
   logo:{
     width: 200,  
-    height: 50, 
+    height: 50,
   }
 });

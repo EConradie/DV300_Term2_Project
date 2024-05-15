@@ -1,8 +1,9 @@
 export const Colors = {
     black: "black",
     white: "white",
-    orange: "#FEBDDD",
+    orange: "#F89520",
     darkGray: "#15181D",
-    gray: "#A5A5A5",
-    lightGray: "#A5A5A5"
+    gray: "#20242A",
+    lightGray: "#282D35",
+    icon: "#747476"
   };
