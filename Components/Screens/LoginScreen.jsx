@@ -77,7 +77,7 @@ export const LoginScreen = ({ navigation }) => {
                   onPress={() => navigation.navigate("RegisterScreen")}
                   style={LoginStyles.underlineButton}
                 >
-                  <Text style={LoginStyles.underlineButtonText}>Sign up</Text>
+                  <Text style={LoginStyles.underlineButtonText}>Sign up.</Text>
                 </Pressable>
               </View>
             </View>
