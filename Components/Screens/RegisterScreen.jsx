@@ -8,6 +8,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import BackgroundImage from "../../assets/images/SplashImage.jpg";
 import LogoImage from "../../assets/icons/logo-name.png";
@@ -16,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 export const RegisterScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
     <View style={RegisterStyles.background}>
@@ -74,11 +76,21 @@ export const RegisterScreen = ({ navigation }) => {
                 />
                 <TextInput
                   placeholder="Password"
-                  secureTextEntry
+                  secureTextEntry={!passwordVisible}
                   autoCorrect={false}
                   placeholderTextColor="white"
                   style={InputStyle.input}
                 />
+                <TouchableOpacity
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                  style={InputStyle.eyeIcon}
+                >
+                  <Ionicons
+                    name={passwordVisible ? "eye-off-outline" : "eye-outline"}
+                    size={24}
+                    color={Colors.icon}
+                  />
+                </TouchableOpacity>
               </View>
 
               {/* BUTTON */}
@@ -95,7 +107,9 @@ export const RegisterScreen = ({ navigation }) => {
                   onPress={() => navigation.navigate("LoginScreen")}
                   style={RegisterStyles.underlineButton}
                 >
-                  <Text style={RegisterStyles.underlineButtonText}>Sign in.</Text>
+                  <Text style={RegisterStyles.underlineButtonText}>
+                    Sign in.
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -131,6 +145,10 @@ const InputStyle = StyleSheet.create({
     position: "absolute",
     paddingLeft: 65,
   },
+  eyeIcon: {
+    position: "absolute",
+    right: 20,
+  },
 });
 
 const RegisterStyles = StyleSheet.create({
@@ -149,7 +167,7 @@ const RegisterStyles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "black", 
+    backgroundColor: "black",
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

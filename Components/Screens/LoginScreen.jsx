@@ -8,6 +8,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import BackgroundImage from "../../assets/images/SplashImage.jpg";
 import LogoImage from "../../assets/icons/logo-name.png";
@@ -16,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 export const LoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
     <View style={LoginStyles.background}>
@@ -56,11 +58,21 @@ export const LoginScreen = ({ navigation }) => {
                 />
                 <TextInput
                   placeholder="Password"
-                  secureTextEntry
+                  secureTextEntry={!passwordVisible}
                   autoCorrect={false}
                   placeholderTextColor="white"
                   style={InputStyle.input}
                 />
+                <TouchableOpacity
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                  style={InputStyle.eyeIcon}
+                >
+                  <Ionicons
+                    name={passwordVisible ? "eye-off-outline" : "eye-outline"}
+                    size={24}
+                    color={Colors.icon}
+                  />
+                </TouchableOpacity>
               </View>
 
               {/* BUTTON */}
@@ -112,6 +124,10 @@ const InputStyle = StyleSheet.create({
     height: "100%",
     position: "absolute",
     paddingLeft: 65,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 20,
   },
 });
 
