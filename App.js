@@ -1,14 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import  { SplashScreen }  from './Components/Screens/SplashScreen.jsx';
 import { LoginScreen } from './Components/Screens/LoginScreen.jsx';
 import { RegisterScreen } from './Components/Screens/RegisterScreen.jsx';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    //<SplashScreen />
-    // <LoginScreen />
-    <RegisterScreen />
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="LoginScreen" screenOptions={{
+    headerShown: false
+  }}>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
