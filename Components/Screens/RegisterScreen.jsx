@@ -94,9 +94,9 @@ export const RegisterScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <Pressable style={RegisterStyles.button}>
+              <TouchableOpacity style={RegisterStyles.button}>
                 <Text style={RegisterStyles.buttonText}>REGISTER</Text>
-              </Pressable>
+              </TouchableOpacity>
 
               {/* UNDERLINE */}
               <View style={RegisterStyles.underline}>

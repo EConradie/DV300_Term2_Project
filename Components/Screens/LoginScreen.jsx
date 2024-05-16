@@ -76,9 +76,9 @@ export const LoginScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <Pressable style={LoginStyles.button}>
+              <TouchableOpacity style={LoginStyles.button}>
                 <Text style={LoginStyles.buttonText}>LOG IN</Text>
-              </Pressable>
+              </TouchableOpacity>
 
               {/* UNDERLINE */}
               <View style={LoginStyles.underline}>
