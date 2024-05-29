@@ -14,10 +14,18 @@ import BackgroundImage from "../../assets/images/SplashImage.jpg";
 import LogoImage from "../../assets/icons/logo-name.png";
 import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
+import { handleLogin } from "../../services/authService";
 
 export const LoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const login = () => {
+    handleLogin(email,password)
+  }
 
   return (
     <View style={LoginStyles.background}>
@@ -44,6 +52,7 @@ export const LoginScreen = ({ navigation }) => {
                 <TextInput
                   placeholder="Email"
                   placeholderTextColor="white"
+                  onChangeText={newText => setEmail(newText)}
                   style={InputStyle.input}
                 />
               </View>
@@ -61,6 +70,7 @@ export const LoginScreen = ({ navigation }) => {
                   secureTextEntry={!passwordVisible}
                   autoCorrect={false}
                   placeholderTextColor="white"
+                  onChangeText={newText => setPassword(newText)}
                   style={InputStyle.input}
                 />
                 <TouchableOpacity
@@ -76,7 +86,7 @@ export const LoginScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <TouchableOpacity style={LoginStyles.button}>
+              <TouchableOpacity style={LoginStyles.button} onPress={login}> 
                 <Text style={LoginStyles.buttonText}>LOG IN</Text>
               </TouchableOpacity>
 

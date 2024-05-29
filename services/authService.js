@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../config/firebase";
 
 export const handleLogin = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
@@ -15,12 +15,13 @@ export const handleLogin = (email, password) => {
   });
 }
 
-export const handleRegister = (email, password) => {
+export const handleRegister = (username, email, password) => {
   createUserWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
     // Signed up 
     const user = userCredential.user;
     console.log("New user: " + user.email);
+    console.log("Username: " + username);
   })
   .catch((error) => {
     const errorCode = error.code;

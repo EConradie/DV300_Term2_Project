@@ -14,10 +14,19 @@ import BackgroundImage from "../../assets/images/SplashImage.jpg";
 import LogoImage from "../../assets/icons/logo-name.png";
 import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
+import { handleRegister } from "../../services/authService";
 
 export const RegisterScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+
+  const register = () => {
+    handleRegister(username, email, password)
+  }
 
   return (
     <View style={RegisterStyles.background}>
@@ -45,6 +54,7 @@ export const RegisterScreen = ({ navigation }) => {
                   placeholder="Username"
                   placeholderTextColor="white"
                   style={InputStyle.input}
+                  onChangeText={newText => setUsername(newText)}
                 />
               </View>
 
@@ -63,6 +73,7 @@ export const RegisterScreen = ({ navigation }) => {
                   keyboardType="email-address"
                   style={InputStyle.input}
                   secureTextEntry={false}
+                  onChangeText={newText => setEmail(newText)}
                 />
               </View>
 
@@ -80,6 +91,7 @@ export const RegisterScreen = ({ navigation }) => {
                   autoCorrect={false}
                   placeholderTextColor="white"
                   style={InputStyle.input}
+                  onChangeText={newText => setPassword(newText)}
                 />
                 <TouchableOpacity
                   onPress={() => setPasswordVisible(!passwordVisible)}
@@ -94,7 +106,7 @@ export const RegisterScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <TouchableOpacity style={RegisterStyles.button}>
+              <TouchableOpacity style={RegisterStyles.button} onPress={register}>
                 <Text style={RegisterStyles.buttonText}>REGISTER</Text>
               </TouchableOpacity>
 
