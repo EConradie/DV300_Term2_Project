@@ -38,7 +38,7 @@ function LoggedInNavigator() {
           let iconName;
           if (route.name === "Profile") {
             iconName = focused ? "person-circle" : "person-circle-outline";
-          } else if (route.name === "Competitions") {
+          } else if (route.name === "Challenges") {
             iconName = focused ? "trophy" : "trophy-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -47,7 +47,7 @@ function LoggedInNavigator() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Competitions" component={CompetitionsNavigator} />
+      <Tab.Screen name="Challenges" component={CompetitionsNavigator} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
