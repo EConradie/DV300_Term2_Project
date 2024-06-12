@@ -123,7 +123,49 @@ export const addVote = async (userId, challengeId, entryId) => {
 export const checkUserHasVoted = async (userId, challengeId, entryId) => {
   const voteRef = doc(db, "challenges", challengeId, "entries", entryId, "votes", userId);
   const docSnap = await getDoc(voteRef);
-  return docSnap.exists();  // Returns true if the vote exists, false otherwise
+  return docSnap.exists(); 
+};
+
+export const getTotalVotesPerUser = async () => {
+  try {
+    const challengesSnapshot = await getDocs(challengesCollectionRef);
+    let userVotes = {};
+
+    for (const challengeDoc of challengesSnapshot.docs) {
+      const entriesCollectionRef = collection(challengeDoc.ref, "entries");
+      const entriesSnapshot = await getDocs(entriesCollectionRef);
+
+      for (const entryDoc of entriesSnapshot.docs) {
+        const votesCollectionRef = collection(entryDoc.ref, "votes");
+        const votesSnapshot = await getDocs(votesCollectionRef);
+
+        votesSnapshot.forEach((voteDoc) => {
+          const userId = voteDoc.id;
+          if (userVotes[userId]) {
+            userVotes[userId].votes += 1;
+          } else {
+            userVotes[userId] = { votes: 1 }; 
+          }
+        });
+      }
+    }
+
+    const userIds = Object.keys(userVotes);
+    const userPromises = userIds.map(id => getDoc(doc(db, "users", id)));
+    const userDocs = await Promise.all(userPromises);
+
+    userDocs.forEach((userDoc, index) => {
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        userVotes[userIds[index]].username = userData.username || 'Unknown'; 
+      }
+    });
+
+    return Object.values(userVotes).sort((a, b) => b.votes - a.votes);
+  } catch (error) {
+    console.error("Error fetching total votes per user:", error);
+    return [];
+  }
 };
 
 

@@ -14,6 +14,7 @@ import { DetailsScreen } from "./components/screens/DetailsScreen";
 import { EntryScreen } from "./components/screens/EntryScreen";
 import { CreateChallengeScreen } from "./components/screens/CreateChallengeScreen";
 import { EntryDetailScreen } from "./components/screens/EntryDetailScreen";
+import { LeaderboardScreen } from "./components/screens/LeaderboardScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,6 +42,8 @@ function LoggedInNavigator() {
           if (route.name === "Profile") {
             iconName = focused ? "person-circle" : "person-circle-outline";
           } else if (route.name === "Challenges") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Leaderboard") {
             iconName = focused ? "trophy" : "trophy-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -51,6 +54,7 @@ function LoggedInNavigator() {
     >
       <Tab.Screen name="Challenges" component={CompetitionsNavigator} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
     </Tab.Navigator>
   );
 }
