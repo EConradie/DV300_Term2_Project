@@ -53,8 +53,9 @@ function LoggedInNavigator() {
       })}
     >
       <Tab.Screen name="Challenges" component={CompetitionsNavigator} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+      
     </Tab.Navigator>
   );
 }
