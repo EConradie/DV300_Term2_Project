@@ -59,10 +59,9 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
-    padding: 10,
+    padding: 20,
+    paddingTop: 75,
     backgroundColor: Colors.gray,
   },
   header: {
@@ -70,23 +69,29 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
     marginBottom: 10,
     color: Colors.orange,
+    alignSelf: "center",
+    marginBottom: 20,
   },
   description: {
     fontSize: 18,
     marginBottom: 10,
     color: Colors.white,
+    backgroundColor: Colors.lightGray,
+    padding: 10,
+    marginBottom: 20,
   },
   fullImage: {
     width: "100%",
     height: 150,
     resizeMode: "contain",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   title: {
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 10,
     color: Colors.white,
+    alignSelf: "center",
   },
   imageContainer: {
     display: "flex",
@@ -104,6 +109,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 5,
     backgroundColor: Colors.orange,
+    alignSelf: "center",
   },
   buttonText: {
     color: Colors.white,

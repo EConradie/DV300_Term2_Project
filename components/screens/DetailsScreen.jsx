@@ -111,7 +111,7 @@ export const DetailsScreen = ({ route, navigation }) => {
                   />
                 ))}
               </ScrollView>
-              <Text style={styles.entryDescription}>{entry.description}</Text>
+              {/* <Text style={styles.entryDescription}>{entry.description}</Text> */}
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -162,11 +162,11 @@ const detailStyles = StyleSheet.create({
   },
   category: {
     fontSize: 14,
-    color: Colors.white,
+    color: "gray",
   },
   author: {
     fontSize: 14,
-    color: Colors.white,
+    color:"gray",
   },
   entryTitle: {
     fontSize: 16,

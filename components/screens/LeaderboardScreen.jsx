@@ -3,18 +3,23 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { getTotalVotesPerUser } from "../../services/dbService";
 import { Colors } from "../Styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const LeaderboardScreen = () => {
   const [leaders, setLeaders] = useState([]);
 
-  useEffect(() => {
-    const fetchLeaders = async () => {
-      const users = await getTotalVotesPerUser();
-      setLeaders(users);
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchLeaders = async () => {
+        const users = await getTotalVotesPerUser();
+        setLeaders(users);
+      };
 
-    fetchLeaders();
-  }, []);
+      fetchLeaders();
+
+      return () => {};
+    }, [])
+  );
 
   return (
     <>
