@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Picker, Alert } from 'react-native';
-import { addChallenge } from '../../services/dbService'; // This function needs to be implemented in dbService.js
+import { addChallenge } from '../../services/dbService';
+import { getAuth } from "firebase/auth";
+import { getCurrentUserInfo } from '../../services/authService';
+
 
 export const CreateChallengeScreen = ({ navigation }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
 
+    
+    const currentUser = getCurrentUserInfo();
+
+    const userId = currentUser.uid;
+    const username = currentUser.displayName;
+
     const handleSubmit = async () => {
         if (!title || !description || !category) {
             Alert.alert('Error', 'Please fill all fields');
             return;
         }
-        const success = await addChallenge(title, description, category);
+        const success = await addChallenge(title, description, category, userId, username);
         if (success) {
             Alert.alert('Success', 'Challenge created successfully');
             navigation.goBack();

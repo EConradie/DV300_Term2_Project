@@ -1,5 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   getChallengeDetails,
@@ -30,15 +38,25 @@ export const DetailsScreen = ({ route, navigation }) => {
       <Button
         title="Enter This Challenge"
         onPress={() =>
-          navigation.navigate("Entry", { challengeId: challenge.id })
+          navigation.navigate("Entry", { challenge: challenge })
         }
       />
       <Text style={styles.entriesTitle}>Entries from Participants</Text>
       <ScrollView style={styles.entriesContainer}>
         {entries.map((entry) => (
-          <View key={entry.id} style={styles.entry}>
-            <Text style={styles.entryText}>{entry.description}</Text>
-          </View>
+          <TouchableOpacity
+            key={entry.id}
+            onPress={() => navigation.navigate("EntryDetail", { entry: entry, challenge: challenge })}
+            style={styles.entryCard}
+          >
+            <Text style={styles.entryUsername}>{entry.username}</Text>
+            <Text style={styles.entryDescription}>{entry.description}</Text>
+            <ScrollView horizontal style={styles.imageContainer}>
+              {entry.images?.map((img, index) => (
+                <Image key={index} source={{ uri: img }} style={styles.image} />
+              ))}
+            </ScrollView>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
@@ -73,12 +91,34 @@ const styles = StyleSheet.create({
   entriesContainer: {
     width: "100%",
   },
-  entry: {
+  entryCard: {
     backgroundColor: "#f0f0f0",
-    padding: 10,
+    padding: 15,
+    borderRadius: 10,
     marginVertical: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1.5,
   },
-  entryText: {
+  entryUsername: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  entryDescription: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 5,
+  },
+  imageContainer: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginRight: 10,
+    borderRadius: 5,
   },
 });

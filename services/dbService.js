@@ -7,11 +7,13 @@ import {
   where,
   getDoc,
   doc,
+  updateDoc,
+  arrayUnion,
+  setDoc
 } from "firebase/firestore";
 
-const challengesCollectionRef = collection(db, "Challenges");
-const entriesCollectionRef = collection(db, "Entries");
-const categoryCollectionRef = collection(db, "Category");
+const challengesCollectionRef = collection(db, "challenges");
+const entriesCollectionRef = collection(db, "entries");
 
 export const getChallenges = async () => {
   try {
@@ -26,44 +28,39 @@ export const getChallenges = async () => {
 export const enterChallenge = async (
   challengeId,
   userId,
+  username,
+  title,
   description,
-  image
+  images
 ) => {
   try {
     const entryData = {
-      challengeId: challengeId,
       userId: userId,
-      date: new Date(),
+      username: username,
+      title: title,
       description: description,
-      image: image,
+      images: images,
+      date: new Date(),
     };
-    const docRef = await addDoc(entriesCollectionRef, entryData);
-    return docRef.id;
+    const entriesCollectionRef = collection(db, "challenges", challengeId, "entries");
+    await addDoc(entriesCollectionRef, entryData);
+    return true;
   } catch (error) {
     console.error("Error entering challenge:", error);
-    return null;
+    return false;
   }
 };
 
-export const getCategories = async () => {
+export const addChallenge = async (title, description, category, userId, username) => {
   try {
-    const querySnapshot = await getDocs(categoryCollectionRef);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    return [];
-  }
-};
-
-export const addChallenge = async (title, description, category) => {
-  try {
-    const docRef = await addDoc(collection(db, "Challenges"), {
+    const docRef = await addDoc(challengesCollectionRef, {
       title: title,
       description: description,
       category: category,
       startDate: new Date(),
       endDate: new Date(),
-      authorId: "yourUserId",
+      authorId: userId,
+      authorName: username,
     });
     return true;
   } catch (error) {
@@ -73,13 +70,38 @@ export const addChallenge = async (title, description, category) => {
 };
 
 export const getEntriesByChallengeId = async (challengeId) => {
-  const entriesRef = collection(db, "Entries");
-  const q = query(entriesRef, where("challengeId", "==", challengeId));
   try {
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const entriesCollectionRef = collection(db, "challenges", challengeId, "entries");
+    const querySnapshot = await getDocs(entriesCollectionRef);
+    return querySnapshot.docs.map((doc) => {
+      const entryData = doc.data();
+      return { id: doc.id, ...entryData, images: entryData.images || [] };
+    });
   } catch (error) {
     console.error("Error fetching entries:", error);
     return [];
   }
 };
+
+export const addVote = async (userId, challengeId, entryId) => {
+  const voteRef = doc(db, "challenges", challengeId, "entries", entryId, "votes", userId);
+
+  try {
+    const docSnap = await getDoc(voteRef);
+    if (docSnap.exists()) {
+      alert("You have already voted for this entry.");
+      return false;
+    }
+
+    await setDoc(voteRef, { entryId: entryId });
+    alert("Vote successfully recorded!");
+    return true;
+  } catch (error) {
+    console.error("Error when adding vote:", error);
+    alert("Failed to record vote.");
+    return false;
+  }
+};
+
+
+

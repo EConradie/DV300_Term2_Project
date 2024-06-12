@@ -4,6 +4,9 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { db } from "../config/firebase";
+import { doc, setDoc } from "firebase/firestore";
+
 
 export const handleLogin = (email, password) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -22,16 +25,23 @@ export const handleLogin = (email, password) => {
 export const handleRegister = (username, email, password) => {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      // Signed up
       const user = userCredential.user;
       console.log("New user: " + user.email);
 
-      // Update the user's profile with username as displayName
       updateProfile(user, {
         displayName: username,
       })
-        .then(() => {
+        .then( async () => {
           console.log("Username set: " + username);
+
+          // Save user data to Firestore
+          await setDoc(doc(db, "users", user.uid), {
+            username: username,
+            email: email,
+            judge: false, 
+            imageUrl: "default", 
+          });
+          console.log("User data saved to Firestore");
         })
         .catch((error) => {
           console.log("Error setting username: ", error.message);
@@ -42,4 +52,19 @@ export const handleRegister = (username, email, password) => {
       const errorMessage = error.message;
       console.log("Error: " + errorMessage);
     });
+};
+
+export const getCurrentUserInfo = () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    };
+  } else {
+    return null;
+  }
 };

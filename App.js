@@ -13,6 +13,7 @@ import { Colors } from "./components/Styles";
 import { DetailsScreen } from "./components/screens/DetailsScreen";
 import { EntryScreen } from "./components/screens/EntryScreen";
 import { CreateChallengeScreen } from "./components/screens/CreateChallengeScreen";
+import { EntryDetailScreen } from "./components/screens/EntryDetailScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -20,8 +21,9 @@ const Tab = createBottomTabNavigator();
 function CompetitionsNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Challenges" component={ChallengesScreen} />
+      <Stack.Screen name="Challenge" component={ChallengesScreen} />
       <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen name="EntryDetail" component={EntryDetailScreen} />
       <Stack.Screen name="Entry" component={EntryScreen} />
       <Stack.Screen name="CreateChallenge" component={CreateChallengeScreen} />
     </Stack.Navigator>
