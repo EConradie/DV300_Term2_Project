@@ -35,7 +35,7 @@ function LoggedInNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { backgroundColor: Colors.darkGray },
+        tabBarStyle: {borderTopWidth: 0, backgroundColor: Colors.darkGray, paddingTop: 10},
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Profile") {
@@ -45,7 +45,7 @@ function LoggedInNavigator() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: Colors.orange,
         tabBarInactiveTintColor: "gray",
       })}
     >

@@ -11,6 +11,7 @@ import {
   arrayUnion,
   setDoc
 } from "firebase/firestore";
+import { handleUploadOfOneImage } from "./bucketService";
 
 const challengesCollectionRef = collection(db, "challenges");
 const entriesCollectionRef = collection(db, "entries");
@@ -51,21 +52,28 @@ export const enterChallenge = async (
   }
 };
 
-export const addChallenge = async (title, description, category, userId, username) => {
+export const addChallenge = async (title, description, category, userId, username, imageUri, endDate) => {
   try {
-    const docRef = await addDoc(challengesCollectionRef, {
-      title: title,
-      description: description,
-      category: category,
-      startDate: new Date(),
-      endDate: new Date(),
-      authorId: userId,
-      authorName: username,
-    });
-    return true;
+      const imageUrl = await handleUploadOfOneImage(imageUri); // Use the bucketService to handle image upload
+      if (!imageUrl) {
+          throw new Error('Failed to upload image');
+      }
+
+      const challengeData = {
+          title,
+          description,
+          category,
+          startDate: new Date(),
+          endDate,
+          authorId: userId,
+          authorName: username,
+          imageUrl // Include the image URL from the upload
+      };
+      await addDoc(collection(db, "challenges"), challengeData);
+      return true;
   } catch (error) {
-    console.error("Error adding challenge:", error);
-    return false;
+      console.error("Error adding challenge:", error);
+      return false;
   }
 };
 
@@ -73,10 +81,19 @@ export const getEntriesByChallengeId = async (challengeId) => {
   try {
     const entriesCollectionRef = collection(db, "challenges", challengeId, "entries");
     const querySnapshot = await getDocs(entriesCollectionRef);
-    return querySnapshot.docs.map((doc) => {
+    const entries = [];
+    for (const doc of querySnapshot.docs) {
       const entryData = doc.data();
-      return { id: doc.id, ...entryData, images: entryData.images || [] };
-    });
+      const votesCollectionRef = collection(doc.ref, "votes");
+      const votesSnapshot = await getDocs(votesCollectionRef);
+      const votesCount = votesSnapshot.size; // Count of votes
+      entries.push({ id: doc.id, ...entryData, votesCount, images: entryData.images || [] });
+    }
+
+    // Sort entries by votesCount in descending order
+    entries.sort((a, b) => b.votesCount - a.votesCount);
+
+    return entries;
   } catch (error) {
     console.error("Error fetching entries:", error);
     return [];
@@ -101,6 +118,12 @@ export const addVote = async (userId, challengeId, entryId) => {
     alert("Failed to record vote.");
     return false;
   }
+};
+
+export const checkUserHasVoted = async (userId, challengeId, entryId) => {
+  const voteRef = doc(db, "challenges", challengeId, "entries", entryId, "votes", userId);
+  const docSnap = await getDoc(voteRef);
+  return docSnap.exists();  // Returns true if the vote exists, false otherwise
 };
 
 
