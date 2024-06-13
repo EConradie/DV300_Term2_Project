@@ -54,7 +54,7 @@ export const enterChallenge = async (
 
 export const addChallenge = async (title, description, category, userId, username, imageUri, endDate) => {
   try {
-      const imageUrl = await handleUploadOfOneImage(imageUri); // Use the bucketService to handle image upload
+      const imageUrl = await handleUploadOfOneImage(imageUri); 
       if (!imageUrl) {
           throw new Error('Failed to upload image');
       }
@@ -67,7 +67,7 @@ export const addChallenge = async (title, description, category, userId, usernam
           endDate,
           authorId: userId,
           authorName: username,
-          imageUrl // Include the image URL from the upload
+          imageUrl 
       };
       await addDoc(collection(db, "challenges"), challengeData);
       return true;
@@ -86,11 +86,10 @@ export const getEntriesByChallengeId = async (challengeId) => {
       const entryData = doc.data();
       const votesCollectionRef = collection(doc.ref, "votes");
       const votesSnapshot = await getDocs(votesCollectionRef);
-      const votesCount = votesSnapshot.size; // Count of votes
+      const votesCount = votesSnapshot.size; 
       entries.push({ id: doc.id, ...entryData, votesCount, images: entryData.images || [] });
     }
 
-    // Sort entries by votesCount in descending order
     entries.sort((a, b) => b.votesCount - a.votesCount);
 
     return entries;
@@ -136,17 +135,17 @@ export const getTotalVotesPerUser = async () => {
       const entriesSnapshot = await getDocs(entriesCollectionRef);
 
       for (const entryDoc of entriesSnapshot.docs) {
+        const entryData = entryDoc.data();
+        const userId = entryData.userId; 
         const votesCollectionRef = collection(entryDoc.ref, "votes");
         const votesSnapshot = await getDocs(votesCollectionRef);
+        const votesCount = votesSnapshot.size; 
 
-        votesSnapshot.forEach((voteDoc) => {
-          const userId = voteDoc.id;
-          if (userVotes[userId]) {
-            userVotes[userId].votes += 1;
-          } else {
-            userVotes[userId] = { votes: 1 }; 
-          }
-        });
+        if (userVotes[userId]) {
+          userVotes[userId].votes += votesCount;
+        } else {
+          userVotes[userId] = { votes: votesCount, username: entryData.username || 'Unknown' }; 
+        }
       }
     }
 
@@ -157,7 +156,7 @@ export const getTotalVotesPerUser = async () => {
     userDocs.forEach((userDoc, index) => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        userVotes[userIds[index]].username = userData.username || 'Unknown'; 
+        userVotes[userIds[index]].username = userData.username || 'Unknown';
       }
     });
 

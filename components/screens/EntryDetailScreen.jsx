@@ -35,6 +35,7 @@ export const EntryDetailScreen = ({ route, navigation }) => {
   };
 
   return (
+    <ScrollView style={styles.scrollContainer}>
     <View style={styles.container}>
       <Text style={styles.title}>{entry.title}</Text>
       <Text style={styles.header}>{entry.username}</Text>
@@ -45,6 +46,9 @@ export const EntryDetailScreen = ({ route, navigation }) => {
         ))}
       </View>
 
+      <View style={styles.votesContainer}>
+        <Text style={styles.votes}>Total Votes: {entry.votesCount}</Text>
+      </View>
       <TouchableOpacity 
         style={[styles.button, hasVoted ? styles.disabledButton : null]} 
         onPress={handleVote}
@@ -53,6 +57,7 @@ export const EntryDetailScreen = ({ route, navigation }) => {
         <Text style={styles.buttonText}>{hasVoted ? "Already Voted" : "VOTE"}</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -111,6 +116,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.orange,
     alignSelf: "center",
   },
+  votesContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 350,
+    height: 60,
+    borderRadius: 5,
+    backgroundColor: Colors.lightGray,
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  votes: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.white,
+  },
   buttonText: {
     color: Colors.white,
     fontWeight: "600",
@@ -118,5 +140,9 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: Colors.darkGray,
+  },
+  scrollContainer: {
+    backgroundColor: Colors.gray,
+    height: "100%",
   },
 });

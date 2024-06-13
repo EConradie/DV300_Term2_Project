@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, Button, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  ScrollView,
+  Image,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getChallenges } from "../../services/dbService";
 import { useFocusEffect } from "@react-navigation/native";
@@ -45,12 +52,14 @@ export const ChallengesScreen = ({ navigation }) => {
               style={styles.challengeItem}
               onPress={() => navigation.navigate("Details", { challenge })}
             >
-              <Image style={styles.image} source={{ uri: challenge.imageUrl }}></Image>
+              <Image
+                style={styles.image}
+                source={{ uri: challenge.imageUrl }}
+              ></Image>
               <View style={styles.textContainer}>
-              <Text style={styles.Itemtitle}>{challenge.title}</Text>
-              <Text style={styles.category}>{challenge.category}</Text>
+                <Text style={styles.Itemtitle}>{challenge.title}</Text>
+                <Text style={styles.category}>{challenge.category}</Text>
               </View>
-              
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -110,8 +119,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    width: "100%",
     marginLeft: 10,
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    width: 300,
+
   },
   category: {
     fontSize: 14,
@@ -119,9 +132,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   Itemtitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "semibold",
     color: Colors.white,
     alignSelf: "flex-start",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
   },
 });

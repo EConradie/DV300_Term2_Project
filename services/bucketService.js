@@ -9,7 +9,7 @@ export const handleUploadOfImages = async (uris) => {
         const blob = await response.blob();
         const uploadRef = ref(storage, `entries/${Date.now()}`);
         await uploadBytes(uploadRef, blob);
-        blob.close(); // It's important to close the blob after using it.
+        blob.close();
         return await getDownloadURL(uploadRef);
       })
     );
@@ -27,9 +27,9 @@ export const handleUploadOfOneImage = async (imageUri) => {
     const blob = await response.blob();
     await uploadBytes(imageRef, blob);
     const imageUrl = await getDownloadURL(imageRef);
-    return imageUrl; // Return the URL of the uploaded image
+    return imageUrl; 
   } catch (error) {
     console.error("Error uploading image:", error);
-    return null; // Return null if there's an error
+    return null;
   }
 };

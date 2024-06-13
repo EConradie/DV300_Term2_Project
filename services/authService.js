@@ -11,7 +11,6 @@ import { doc, setDoc } from "firebase/firestore";
 export const handleLogin = (email, password) => {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      // Signed in
       const user = userCredential.user;
       console.log("Logged in user: " + user.email);
     })

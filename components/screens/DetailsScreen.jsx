@@ -240,10 +240,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   entryTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     color: Colors.white,
     marginBottom: 5,
+    width: 200
   },
   entryTitleContainer: {
     display: "flex",
@@ -256,5 +257,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.orange,
     marginRight: 5,
+    position: "absolute",
+    right: 0,
+    top: 0
   },
 });
