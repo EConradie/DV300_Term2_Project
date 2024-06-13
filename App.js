@@ -9,12 +9,12 @@ import { LoginScreen } from "./components/screens/LoginScreen";
 import { RegisterScreen } from "./components/screens/RegisterScreen";
 import { ChallengesScreen } from "./components/screens/ChallengesScreen";
 import { ProfileScreen } from "./components/screens/ProfileScreen";
-import { Colors } from "./components/Styles";
 import { DetailsScreen } from "./components/screens/DetailsScreen";
 import { EntryScreen } from "./components/screens/EntryScreen";
 import { CreateChallengeScreen } from "./components/screens/CreateChallengeScreen";
 import { EntryDetailScreen } from "./components/screens/EntryDetailScreen";
 import { LeaderboardScreen } from "./components/screens/LeaderboardScreen";
+import { Colors } from "./components/Styles";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,7 +36,7 @@ function LoggedInNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: {borderTopWidth: 0, backgroundColor: Colors.darkGray, paddingTop: 10},
+        tabBarStyle: {borderTopWidth: 0, backgroundColor: Colors.orange, paddingTop: 10},
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Profile") {
@@ -48,8 +48,8 @@ function LoggedInNavigator() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: Colors.orange,
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: Colors.white,
+        tabBarInactiveTintColor: Colors.darkGray,
       })}
     >
       <Tab.Screen name="Challenges" component={CompetitionsNavigator} />

@@ -29,7 +29,7 @@ export const DetailsScreen = ({ route, navigation }) => {
 
       fetchDetailsAndEntries();
 
-      return () => {};
+      return () => { };
     }, [challenge.id])
   );
 
@@ -37,6 +37,15 @@ export const DetailsScreen = ({ route, navigation }) => {
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={detailStyles.imageContainer}>
+          <View style={detailStyles.headerIcon}>
+            <Ionicons
+              name="chevron-back"
+              size={24}
+              color={Colors.white}
+              onPress={() => navigation.goBack()}
+            />
+          </View>
+
           <Image
             style={detailStyles.image}
             source={{ uri: challenge.imageUrl }}
@@ -84,7 +93,7 @@ export const DetailsScreen = ({ route, navigation }) => {
         </View>
 
         <ScrollView style={styles.entriesContainer}>
-          {entries.map((entry) => (
+          {entries.map((entry, index) => (
             <TouchableOpacity
               key={entry.id}
               onPress={() =>
@@ -93,11 +102,11 @@ export const DetailsScreen = ({ route, navigation }) => {
                   challenge: challenge,
                 })
               }
-              style={styles.entryCard}
+              style={index === 0 ? styles.firstEntryCard : styles.entryCard}
             >
               <View style={styles.entryTitleContainer}>
                 <Text style={styles.entryTitle}>{entry.title}</Text>
-                <Text style={styles.entryVotes}>{entry.votesCount}</Text>                
+                <Text style={styles.entryVotes}>{entry.votesCount} pt</Text>
               </View>
 
               <Text style={styles.entryUsername}>{entry.username}</Text>
@@ -128,7 +137,7 @@ const detailStyles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 250,
   },
   title: {
     fontSize: 24,
@@ -166,19 +175,27 @@ const detailStyles = StyleSheet.create({
   },
   author: {
     fontSize: 14,
-    color:"gray",
+    color: "gray",
   },
   entryTitle: {
     fontSize: 16,
     fontWeight: "semibold",
     color: Colors.orange,
   },
+  headerIcon: {
+    position: "absolute",
+    top: 50,
+    left: 15,
+    zIndex: 1,
+    backgroundColor: Colors.lightGray,
+    padding: 10,
+    borderRadius: 10
+  },
 });
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.gray,
-    paddingTop: 75,
     height: "100%",
   },
   scrollContainer: {
@@ -216,6 +233,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 1.5,
+  },
+  firstEntryCard: {
+    backgroundColor: Colors.lightGray,
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1.5,
+    borderWidth: 1,
+    borderColor: Colors.orange,
   },
   entryUsername: {
     fontSize: 16,

@@ -36,27 +36,30 @@ export const EntryDetailScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.scrollContainer}>
-    <View style={styles.container}>
-      <Text style={styles.title}>{entry.title}</Text>
-      <Text style={styles.header}>{entry.username}</Text>
-      <Text style={styles.description}>{entry.description}</Text>
-      <View style={styles.imageContainer}>
-        {entry.images?.map((img, index) => (
-          <Image key={index} source={{ uri: img }} style={styles.fullImage} />
-        ))}
-      </View>
+      <View style={styles.container}>
+        <Text style={styles.title}>{entry.title}</Text>
+        <Text style={styles.header}>{entry.username}</Text>
+        <Text style={styles.description}>{entry.description}</Text>
+        <ScrollView horizontal>
+          <View style={styles.imageContainer}>
 
-      <View style={styles.votesContainer}>
-        <Text style={styles.votes}>Total Votes: {entry.votesCount}</Text>
+            {entry.images?.map((img, index) => (
+              <Image key={index} source={{ uri: img }} style={styles.fullImage} />
+            ))}
+
+          </View>
+        </ScrollView>
+        <View style={styles.votesContainer}>
+          <Text style={styles.votes}>Total Votes: {entry.votesCount}</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.button, hasVoted ? styles.disabledButton : null]}
+          onPress={handleVote}
+          disabled={hasVoted}
+        >
+          <Text style={styles.buttonText}>{hasVoted ? "Already Voted" : "VOTE"}</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity 
-        style={[styles.button, hasVoted ? styles.disabledButton : null]} 
-        onPress={handleVote}
-        disabled={hasVoted}
-      >
-        <Text style={styles.buttonText}>{hasVoted ? "Already Voted" : "VOTE"}</Text>
-      </TouchableOpacity>
-    </View>
     </ScrollView>
   );
 };
@@ -82,14 +85,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: Colors.white,
     backgroundColor: Colors.lightGray,
-    padding: 10,
+    padding: 15,
     marginBottom: 20,
+    borderRadius: 5,
   },
   fullImage: {
-    width: "100%",
-    height: 150,
-    resizeMode: "contain",
-    marginBottom: 20,
+    width: 200,
+    marginRight: 20,
+    borderRadius: 5,
   },
   title: {
     fontSize: 30,
@@ -100,36 +103,31 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row",
+    height: 150,
     width: "100%",
+    marginBottom: 20,
   },
   button: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 350,
     height: 60,
     borderRadius: 5,
     backgroundColor: Colors.orange,
-    alignSelf: "center",
   },
   votesContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 350,
     height: 60,
     borderRadius: 5,
     backgroundColor: Colors.lightGray,
-    alignSelf: "center",
     marginBottom: 10,
   },
   votes: {
-    fontSize: 16,
     fontWeight: "bold",
     color: Colors.white,
   },
