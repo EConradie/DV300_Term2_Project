@@ -17,11 +17,11 @@ import { getCurrentUserInfo } from "../../services/authService";
 import * as ImagePicker from "expo-image-picker";
 import { handleUploadProfileImage } from "../../services/bucketService";
 
-export const ProfileScreen = ({ navigation }) => {
+export const ProfileScreen = ({ navigation, route }) => {
   const [entries, setEntries] = useState([]);
   const [points, setPoints] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState();
   const [image, setImage] = useState(null);
 
   const updateProfileImage = async () => {
@@ -33,9 +33,9 @@ export const ProfileScreen = ({ navigation }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result.assets[0].uri);
       const imageUrl = await handleUploadProfileImage(
-        result.uri,
+        result.assets[0].uri,
         currentUser.uid
       );
       setCurrentUser({ ...currentUser, imageUrl });
@@ -44,26 +44,45 @@ export const ProfileScreen = ({ navigation }) => {
 
   const handleLogout = () => {
     signOut(auth)
-      .then(() => console.log("User signed out!"))
-      .catch((error) => console.error("Sign out error", error));
+      .then(() => {
+        console.log("User signed out!");
+      })
+      .catch((error) => {
+        console.error("Sign out error", error);
+      });
+  };
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUserInfo();
+      setCurrentUser(user);
+      if (!user) {
+        console.error("No user data returned from getCurrentUserInfo");
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+  const fetchPoints = async () => {
+    let totalVotes = 0;
+    entries.forEach((entry) => {
+      totalVotes += entry.votesCount;
+    });
+    setPoints(totalVotes);
+  };
+
+  const fetchEntries = async () => {
+    const data = await getEntriesByUserId(auth.currentUser.uid);
+    setEntries(data);
+    setTotalEntries(data.length);
+    fetchPoints();
   };
 
   useFocusEffect(
     useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const user = await getCurrentUserInfo();
-          const data = await getEntriesByUserId(auth.currentUser.uid);
-          setEntries(data);
-          setTotalEntries(data.length);
-          setCurrentUser(user);
-          setPoints(data.reduce((acc, entry) => acc + entry.votesCount, 0));
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-
-      fetchData();
+      fetchCurrentUser();
+      fetchEntries();
 
       return () => {};
     }, [])
@@ -185,7 +204,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 200,
-    backgroundColor: Colors.darkGray,
+    backgroundColor: Colors.lightGray,
     width: "100%",
   },
   pointsContainer: {
@@ -207,7 +226,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 100,
+    paddingHorizontal: 65,
     marginBottom: 20,
   },
   entryLabel: {

@@ -1,12 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { getTotalVotesPerUser } from "../../services/dbService";
 import { Colors } from "../Styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
+import { getCurrentUserInfo } from "../../services/authService";
 
-export const LeaderboardScreen = ( { navigation, route }) => {
+export const LeaderboardScreen = ({ navigation, route }) => {
   const [leaders, setLeaders] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUserInfo();
+      setCurrentUser(user);
+      if (!user) {
+        console.error("No user data returned from getCurrentUserInfo");
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -16,10 +37,13 @@ export const LeaderboardScreen = ( { navigation, route }) => {
       };
 
       fetchLeaders();
+      fetchCurrentUser();
 
       return () => {};
     }, [])
   );
+
+  const currentUserLeaderCard = leaders.find((user) => user.id === currentUser?.uid);
 
   return (
     <>
@@ -28,13 +52,20 @@ export const LeaderboardScreen = ( { navigation, route }) => {
 
         <ScrollView>
           {leaders.map((user, index) => (
-            <TouchableOpacity key={index} style={styles.card} onPress={() => navigation.navigate("User", { user })}>
+            <TouchableOpacity
+              key={index}
+              style={styles.card}
+              onPress={() => navigation.navigate("User", { user })}
+            >
               <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{ uri: user.imageUrl }}></Image>
+                <Image
+                  style={styles.image}
+                  source={{ uri: user.imageUrl }}
+                ></Image>
               </View>
               <View style={styles.userContainer}>
                 <Text style={styles.name}>{user.username}</Text>
-                <Text style={styles.votes}>{user.votes} Votes</Text>
+                <Text style={styles.votes}>{user.votes} Points</Text>
               </View>
               {index === 0 && (
                 <View style={styles.trophyContainer}>
@@ -49,6 +80,21 @@ export const LeaderboardScreen = ( { navigation, route }) => {
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        {currentUserLeaderCard && (
+          <View style={styles.personalCard}>
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                source={{ uri: currentUserLeaderCard.imageUrl || undefined }}
+              />
+            </View>
+            <View style={styles.userContainer}>
+              <Text style={styles.name}>{currentUserLeaderCard.username}</Text>
+              <Text style={styles.votes}>{currentUserLeaderCard.votes} Points</Text>
+            </View>
+          </View>
+        )}
       </View>
     </>
   );
@@ -75,6 +121,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 1.5,
+  },
+  personalCard: {
+    display: "flex",
+    flexDirection: "row",
+    alignContent: "center",
+    borderRadius: 10,
+    marginVertical: 5,
+    backgroundColor: Colors.lightGray,
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1.5,
+    borderWidth: 1,
+    borderColor: Colors.orange,
   },
   name: {
     fontSize: 18,

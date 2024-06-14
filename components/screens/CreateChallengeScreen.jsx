@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -19,8 +19,11 @@ import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import ModalDropdown from "react-native-modal-dropdown";
+import { Keyboard } from 'react-native';
 
 export const CreateChallengeScreen = ({ navigation }) => {
+  const descriptionInputRef = useRef(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -34,19 +37,23 @@ export const CreateChallengeScreen = ({ navigation }) => {
       const user = await getCurrentUserInfo();
       setCurrentUser(user);
       if (!user) {
-        console.error('No user data returned from getCurrentUserInfo');
+        console.error("No user data returned from getCurrentUserInfo");
       }
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      console.error("Failed to fetch user:", error);
     }
   };
 
-  useFocusEffect (
+  useFocusEffect(
     useCallback(() => {
       fetchCurrentUser();
       return () => {};
     }, [])
   );
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -116,10 +123,12 @@ export const CreateChallengeScreen = ({ navigation }) => {
         <TextInput style={styles.input} value={title} onChangeText={setTitle} />
         <Text style={styles.label}>Description:</Text>
         <TextInput
+          ref={descriptionInputRef}
           style={styles.descInput}
           value={description}
           onChangeText={setDescription}
           multiline
+          onPress={dismissKeyboard}
         />
         <Text style={styles.label}>End Date:</Text>
         <DateTimePicker
@@ -130,27 +139,20 @@ export const CreateChallengeScreen = ({ navigation }) => {
           display="default"
           onChange={onDateChange}
           textColor="white"
+          themeVariant="dark"
           accentColor={Colors.orange}
           style={styles.datePicker}
         />
         <Text style={styles.label}>Category:</Text>
-        <Picker
-          style={styles.picker}
-          selectedValue={category}
-          onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-        >
-          <Picker.Item
-            color="white"
-            label="Fixed Knives"
-            value="Fixed Knives"
-          />
-          <Picker.Item color="white" label="Chef Knives" value="Chef Knives" />
-          <Picker.Item
-            color="white"
-            label="Forged Knives"
-            value="Forged Knives"
-          />
-        </Picker>
+        <ModalDropdown
+          options={["Fixed Knives", "Chef Knives", "Forged Knives"]}
+          defaultValue="Select"
+          onSelect={(index, value) => setCategory(value)}
+          textStyle={styles.dropdownText}
+          dropdownStyle={styles.dropdownDropdown}
+          dropdownTextStyle={styles.dropdownDropdownText}
+          dropdownTextHighlightStyle={styles.dropdownTextHighlight}
+        />
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Create</Text>
@@ -240,6 +242,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 10,
     marginBottom: 15,
+    textColor: Colors.white,
   },
   imageContainer: {
     display: "flex",
@@ -268,5 +271,30 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  dropdownText: {
+    margin: 10,
+    fontSize: 18,
+    color: Colors.white,
+    textAlign: 'center',
+  },
+  dropdownDropdown: {
+    width: '91%', // Adjust the width as necessary
+    borderColor: Colors.gray,
+    borderWidth: 2,
+    borderRadius: 3,
+    backgroundColor: Colors.lightGray,
+    height: "200",
+  },
+  dropdownDropdownText: {
+    fontSize: 16,
+    color: Colors.white,
+    backgroundColor: Colors.lightGray,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  dropdownTextHighlight: {
+    color: Colors.orange,
+    backgroundColor: Colors.darkGray,
   },
 });

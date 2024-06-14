@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 200,
-    backgroundColor: Colors.darkGray,
+    backgroundColor: Colors.gray,
     width: "100%",
   },
   pointsContainer: {
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 100,
+    paddingHorizontal: 65,
     marginBottom: 20,
   },
   entryLabel: {

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 70,
-    height: 50,
+    height: 'auto',
     borderRadius: 10,
   },
   textContainer: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
-    width: 300,
+    width: 200,
 
   },
   category: {
