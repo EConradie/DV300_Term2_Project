@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -16,13 +16,33 @@ import * as ImagePicker from "expo-image-picker";
 import { handleUploadOfImages } from "../../services/bucketService";
 import { Colors } from "../Styles"; 
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const EntryScreen = ({ route, navigation }) => {
   const { challenge } = route.params;
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
-  const currentUser = getCurrentUserInfo();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUserInfo();
+      setCurrentUser(user);
+      if (!user) {
+        console.error('No user data returned from getCurrentUserInfo');
+      }
+    } catch (error) {
+      console.error('Failed to fetch user:', error);
+    }
+  };
+
+  useFocusEffect (
+    useCallback(() => {
+      fetchCurrentUser();
+      return () => {};
+    }, [])
+  );
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -43,14 +63,12 @@ export const EntryScreen = ({ route, navigation }) => {
       return;
     }
 
-    const userId = currentUser.uid;
-    const username = currentUser.displayName;
     const imageUrls = await handleUploadOfImages(images);
 
     const result = await enterChallenge(
       challenge.id,
-      userId,
-      username,
+      currentUser.uid,
+      currentUser.username,
       title,
       description,
       imageUrls

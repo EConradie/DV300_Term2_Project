@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import { getTotalVotesPerUser } from "../../services/dbService";
 import { Colors } from "../Styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 
-export const LeaderboardScreen = () => {
+export const LeaderboardScreen = ( { navigation, route }) => {
   const [leaders, setLeaders] = useState([]);
 
   useFocusEffect(
@@ -28,7 +28,10 @@ export const LeaderboardScreen = () => {
 
         <ScrollView>
           {leaders.map((user, index) => (
-            <View key={index} style={styles.card}>
+            <TouchableOpacity key={index} style={styles.card} onPress={() => navigation.navigate("User", { user })}>
+              <View style={styles.imageContainer}>
+                <Image style={styles.image} source={{ uri: user.imageUrl }}></Image>
+              </View>
               <View style={styles.userContainer}>
                 <Text style={styles.name}>{user.username}</Text>
                 <Text style={styles.votes}>{user.votes} Votes</Text>
@@ -43,7 +46,7 @@ export const LeaderboardScreen = () => {
                   />
                 </View>
               )}
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -61,11 +64,9 @@ const styles = StyleSheet.create({
   card: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     alignContent: "center",
     borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 5,
     backgroundColor: Colors.lightGray,
     padding: 15,
     borderRadius: 10,
@@ -89,21 +90,30 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
     color: Colors.white,
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginBottom: 15,
   },
   trophy: {
-    alignSelf: "flex-end",
-    alignItems: "center",
     color: Colors.orange,
   },
   trophyContainer: {
-    alignSelf: "flex-end",
-    alignItems: "center",
-    marginBottom: 10,
-    marginRight: 5,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    paddingVertical: 26,
+    paddingRight: 20,
   },
   userContainer: {
     display: "flex",
     flexDirection: "column",
+    marginLeft: 15,
+    marginTop: 2,
+  },
+  imageContainer: {
+    alignSelf: "flex-start",
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
   },
 });

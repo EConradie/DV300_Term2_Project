@@ -1,5 +1,8 @@
 import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
-import { storage } from "../config/firebase";
+import { updateProfile } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { storage, db, auth } from "../config/firebase";
+import * as ImagePicker from 'expo-image-picker';
 
 export const handleUploadOfImages = async (uris) => {
   try {
@@ -20,6 +23,24 @@ export const handleUploadOfImages = async (uris) => {
   }
 };
 
+export const handleUploadProfileImage = async (imageUri, userId) => {
+  try {
+    const imageRef = ref(storage, `profileImages/${userId}`);
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    await uploadBytes(imageRef, blob);
+    const imageUrl = await getDownloadURL(imageRef);
+
+    const userDocRef = doc(db, "users", userId);
+    await setDoc(userDocRef, { imageUrl: imageUrl }, { merge: true });
+
+    return imageUrl;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return null;
+  }
+};
+
 export const handleUploadOfOneImage = async (imageUri) => {
   try {
     const imageRef = ref(storage, `challenges/${new Date().getTime()}`);
@@ -33,3 +54,4 @@ export const handleUploadOfOneImage = async (imageUri) => {
     return null;
   }
 };
+

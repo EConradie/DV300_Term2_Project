@@ -5,8 +5,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { db } from "../config/firebase";
-import { doc, setDoc } from "firebase/firestore";
-
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const handleLogin = (email, password) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -30,15 +29,16 @@ export const handleRegister = (username, email, password) => {
       updateProfile(user, {
         displayName: username,
       })
-        .then( async () => {
+        .then(async () => {
           console.log("Username set: " + username);
 
           // Save user data to Firestore
           await setDoc(doc(db, "users", user.uid), {
             username: username,
             email: email,
-            judge: false, 
-            imageUrl: "default", 
+            judge: false,
+            imageUrl:
+              "https://firebasestorage.googleapis.com/v0/b/bladel-ffacf.appspot.com/o/profileImages%2Fdefault.png?alt=media&token=69b1b833-b1f4-4c1b-8043-32ddcfdd5a19",
           });
           console.log("User data saved to Firestore");
         })
@@ -53,16 +53,19 @@ export const handleRegister = (username, email, password) => {
     });
 };
 
-export const getCurrentUserInfo = () => {
+export const getCurrentUserInfo = async () => {
   const user = auth.currentUser;
 
   if (user) {
-    return {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-    };
+    const userDoc = doc(db, "users", user.uid);
+    const userSnapshot = await getDoc(userDoc);
+
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
+      return { uid: userSnapshot.id, ...userData };
+    } else {
+      return null;
+    }
   } else {
     return null;
   }

@@ -8,66 +8,36 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { signOut } from "firebase/auth";
-import { auth } from "../../config/firebase";
 import { Colors } from "../Styles"; // Ensure this import path is correct
 import { useFocusEffect } from "@react-navigation/native";
 import { getEntriesByUserId } from "../../services/dbService";
-import { getCurrentUserInfo } from "../../services/authService";
-import * as ImagePicker from "expo-image-picker";
-import { handleUploadProfileImage } from "../../services/bucketService";
 
-export const ProfileScreen = ({ navigation }) => {
-  const [entries, setEntries] = useState([]);
-  const [points, setPoints] = useState(0);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [image, setImage] = useState(null);
 
-  const updateProfileImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-      const imageUrl = await handleUploadProfileImage(
-        result.uri,
-        currentUser.uid
-      );
-      setCurrentUser({ ...currentUser, imageUrl });
-    }
-  };
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => console.log("User signed out!"))
-      .catch((error) => console.error("Sign out error", error));
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const user = await getCurrentUserInfo();
-          const data = await getEntriesByUserId(auth.currentUser.uid);
-          setEntries(data);
-          setTotalEntries(data.length);
-          setCurrentUser(user);
-          setPoints(data.reduce((acc, entry) => acc + entry.votesCount, 0));
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-
-      fetchData();
-
-      return () => {};
-    }, [])
-  );
+export const UserScreen = ({ navigation, route }) => {
+    const [user, setUser] = useState(route.params.user);
+    const [entries, setEntries] = useState([]);
+    const [totalEntries, setTotalEntries] = useState(0);
+  
+    const fetchData = async () => {
+      try {
+        const data = await getEntriesByUserId(user.id);
+        setEntries(data);
+        setTotalEntries(data.length);
+        console.log(user);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    useFocusEffect(
+      useCallback(() => {
+        setUser(route.params.user);
+        fetchData();
+        setEntries([]);
+        setTotalEntries(0);
+        return () => {};
+      }, [route.params.user])
+    );
 
   return (
     <>
@@ -75,19 +45,16 @@ export const ProfileScreen = ({ navigation }) => {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.imageContainer}
-          onPress={updateProfileImage}
         >
-          <Image style={styles.image} source={{ uri: currentUser?.imageUrl }} />
+          <Image style={styles.image} source={{ uri: user?.imageUrl }} />
         </TouchableOpacity>
         <View style={styles.userInfoSection}>
-          <Text style={styles.username}>
-            {auth.currentUser?.displayName || "Not set"}
-          </Text>
-          <Text style={styles.userEmail}>{auth.currentUser?.email}</Text>
+          <Text style={styles.username}>{user?.username}</Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
         </View>
         <View style={styles.pointsSection}>
           <View style={styles.pointsContainer}>
-            <Text style={styles.points}>{points}</Text>
+            <Text style={styles.points}>{user.votes}</Text>
             <Text style={styles.pointsText}>Points</Text>
           </View>
           <View style={styles.pointsContainer}>
@@ -111,15 +78,6 @@ export const ProfileScreen = ({ navigation }) => {
               ))}
           </ScrollView>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleLogout}>
-          <Text
-            style={styles.buttonText}
-            source={require("../../assets/images/SplashImage.jpg")}
-          >
-            Sign Out
-          </Text>
-        </TouchableOpacity>
       </View>
     </>
   );
@@ -150,20 +108,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     borderBottomWidth: 1,
     borderBottomColor: Colors.darkGray,
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: Colors.orange,
-    borderRadius: 10,
-    width: "100%",
-    padding: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: Colors.white,
-    fontSize: 18,
-    fontWeight: "600",
   },
   imageContainer: {
     alignItems: "center",

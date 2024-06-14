@@ -125,6 +125,32 @@ export const checkUserHasVoted = async (userId, challengeId, entryId) => {
   return docSnap.exists(); 
 };
 
+export const getEntriesByUserId = async (userId) => {
+  try {
+    const challengesSnapshot = await getDocs(challengesCollectionRef);
+    const entries = [];
+
+    for (const challengeDoc of challengesSnapshot.docs) {
+      const entriesCollectionRef = collection(challengeDoc.ref, "entries");
+      const entriesSnapshot = await getDocs(entriesCollectionRef);
+      for (const entryDoc of entriesSnapshot.docs) {
+        const entryData = entryDoc.data();
+        if (entryData.userId === userId) {
+          const votesCollectionRef = collection(entryDoc.ref, "votes");
+          const votesSnapshot = await getDocs(votesCollectionRef);
+          const votesCount = votesSnapshot.size; 
+          entries.push({ id: entryDoc.id, ...entryData, votesCount, images: entryData.images || [] });
+        }
+      }
+    }
+    
+    return entries; 
+  } catch (error) {
+    console.error("Error fetching entries:", error);
+    return [];
+  }
+};
+
 export const getTotalVotesPerUser = async () => {
   try {
     const challengesSnapshot = await getDocs(challengesCollectionRef);
@@ -157,6 +183,9 @@ export const getTotalVotesPerUser = async () => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         userVotes[userIds[index]].username = userData.username || 'Unknown';
+        userVotes[userIds[index]].imageUrl = userData.imageUrl || null;
+        userVotes[userIds[index]].id = userDoc.id || null;
+        userVotes[userIds[index]].email = userData.email || null;
       }
     });
 

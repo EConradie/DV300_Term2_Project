@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const CreateChallengeScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -26,10 +27,26 @@ export const CreateChallengeScreen = ({ navigation }) => {
   const [endDate, setEndDate] = useState(new Date());
   const [image, setImage] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const currentUser = getCurrentUserInfo();
-  const userId = currentUser.uid;
-  const username = currentUser.displayName;
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUserInfo();
+      setCurrentUser(user);
+      if (!user) {
+        console.error('No user data returned from getCurrentUserInfo');
+      }
+    } catch (error) {
+      console.error('Failed to fetch user:', error);
+    }
+  };
+
+  useFocusEffect (
+    useCallback(() => {
+      fetchCurrentUser();
+      return () => {};
+    }, [])
+  );
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -64,8 +81,8 @@ export const CreateChallengeScreen = ({ navigation }) => {
       title,
       description,
       category,
-      userId,
-      username,
+      currentUser.uid,
+      currentUser.username,
       image,
       endDate
     );
@@ -90,55 +107,54 @@ export const CreateChallengeScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Create Challenge</Text>
       </View>
       <ScrollView>
-      <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-        {!image && <Text style={styles.pickImageText}>Pick Image</Text>}
-        {image && <Image source={{ uri: image }} style={styles.image} />}
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+          {!image && <Text style={styles.pickImageText}>Pick Image</Text>}
+          {image && <Image source={{ uri: image }} style={styles.image} />}
+        </TouchableOpacity>
 
-        
-      <Text style={styles.label}>Title:</Text>
-      <TextInput style={styles.input} value={title} onChangeText={setTitle} />
-      <Text style={styles.label}>Description:</Text>
-      <TextInput
-        style={styles.descInput}
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
-      <Text style={styles.label}>End Date:</Text>
-      <DateTimePicker
-        testID="dateTimePicker"
-        value={endDate}
-        mode="date"
-        is24Hour={true}
-        display="default"
-        onChange={onDateChange}
-        textColor="white"
-        accentColor={Colors.orange}
-        style={styles.datePicker}
-      />
-      <Text style={styles.label}>Category:</Text>
-      <Picker
-        style={styles.picker}
-        selectedValue={category}
-        onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-      >
-        <Picker.Item color="white" label="Fixed Knives" value="Fixed Knives" />
-        <Picker.Item color="white" label="Chef Knives" value="Chef Knives" />
-        <Picker.Item
-          color="white"
-          label="Forged Knives"
-          value="Forged Knives"
+        <Text style={styles.label}>Title:</Text>
+        <TextInput style={styles.input} value={title} onChangeText={setTitle} />
+        <Text style={styles.label}>Description:</Text>
+        <TextInput
+          style={styles.descInput}
+          value={description}
+          onChangeText={setDescription}
+          multiline
         />
-      </Picker>
+        <Text style={styles.label}>End Date:</Text>
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={endDate}
+          mode="date"
+          is24Hour={true}
+          display="default"
+          onChange={onDateChange}
+          textColor="white"
+          accentColor={Colors.orange}
+          style={styles.datePicker}
+        />
+        <Text style={styles.label}>Category:</Text>
+        <Picker
+          style={styles.picker}
+          selectedValue={category}
+          onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
+        >
+          <Picker.Item
+            color="white"
+            label="Fixed Knives"
+            value="Fixed Knives"
+          />
+          <Picker.Item color="white" label="Chef Knives" value="Chef Knives" />
+          <Picker.Item
+            color="white"
+            label="Forged Knives"
+            value="Forged Knives"
+          />
+        </Picker>
 
-      
-
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText} onPress={handleSubmit}>
-          Create
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Create</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -190,7 +206,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 150,
   },
   inputField: {
@@ -224,7 +240,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 10,
     marginBottom: 15,
-
   },
   imageContainer: {
     display: "flex",

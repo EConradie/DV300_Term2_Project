@@ -15,6 +15,7 @@ import { CreateChallengeScreen } from "./components/screens/CreateChallengeScree
 import { EntryDetailScreen } from "./components/screens/EntryDetailScreen";
 import { LeaderboardScreen } from "./components/screens/LeaderboardScreen";
 import { Colors } from "./components/Styles";
+import { UserScreen } from "./components/screens/UserScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,16 @@ function CompetitionsNavigator() {
       <Stack.Screen name="EntryDetail" component={EntryDetailScreen} />
       <Stack.Screen name="Entry" component={EntryScreen} />
       <Stack.Screen name="CreateChallenge" component={CreateChallengeScreen} />
+      <Stack.Screen name="User" component={UserScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function LeaderBoardNavigation() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Stack.Screen name="User" component={UserScreen} />
     </Stack.Navigator>
   );
 }
@@ -53,7 +64,7 @@ function LoggedInNavigator() {
       })}
     >
       <Tab.Screen name="Challenges" component={CompetitionsNavigator} />
-      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Tab.Screen name="Leaderboard" component={LeaderBoardNavigation} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       
     </Tab.Navigator>
