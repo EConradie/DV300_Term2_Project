@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { getTotalVotesPerUser } from "../../services/dbService";
 import { Colors } from "../Styles";
@@ -16,6 +17,7 @@ import { getCurrentUserInfo } from "../../services/authService";
 export const LeaderboardScreen = ({ navigation, route }) => {
   const [leaders, setLeaders] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchCurrentUser = async () => {
     try {
@@ -34,6 +36,7 @@ export const LeaderboardScreen = ({ navigation, route }) => {
       const fetchLeaders = async () => {
         const users = await getTotalVotesPerUser();
         setLeaders(users);
+        setLoading(false);
       };
 
       fetchLeaders();
@@ -44,6 +47,10 @@ export const LeaderboardScreen = ({ navigation, route }) => {
   );
 
   const currentUserLeaderCard = leaders.find((user) => user.id === currentUser?.uid);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.orange} style={{ flex: 1, justifyContent: 'center', backgroundColor: Colors.gray }} />;
+  }
 
   return (
     <>

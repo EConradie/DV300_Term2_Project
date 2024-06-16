@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -19,17 +20,19 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 export const DetailsScreen = ({ route, navigation }) => {
   const { challenge } = route.params;
   const [entries, setEntries] = useState([]);
+  const [loadingEntries, setLoadingEntries] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       const fetchDetailsAndEntries = async () => {
         const entriesData = await getEntriesByChallengeId(challenge.id);
         setEntries(entriesData);
+        setLoadingEntries(false);
       };
 
       fetchDetailsAndEntries();
 
-      return () => { };
+      return () => {};
     }, [challenge.id])
   );
 
@@ -71,7 +74,6 @@ export const DetailsScreen = ({ route, navigation }) => {
             Created by: {challenge.authorName}
           </Text>
         </View>
-
 
         <View style={detailStyles.container}>
           <View style={detailStyles.textContainer}>
@@ -123,6 +125,9 @@ export const DetailsScreen = ({ route, navigation }) => {
               {/* <Text style={styles.entryDescription}>{entry.description}</Text> */}
             </TouchableOpacity>
           ))}
+
+          {loadingEntries && <ActivityIndicator size="large" color={Colors.orange} />}
+          {!loadingEntries && entries.length === 0 && <Text style={styles.noEntriesText}>No entries yet</Text>}
         </ScrollView>
       </View>
     </ScrollView>
@@ -189,7 +194,7 @@ const detailStyles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: Colors.lightGray,
     padding: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
 });
 
@@ -273,7 +278,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.white,
     marginBottom: 5,
-    width: 200
+    width: 200,
   },
   entryTitleContainer: {
     display: "flex",
@@ -288,6 +293,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     position: "absolute",
     right: 0,
-    top: 0
+    top: 0,
+  },
+  noEntriesText: {
+    fontSize: 16,
+    color: Colors.orange,
+    textAlign: "center",
   },
 });

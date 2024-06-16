@@ -19,12 +19,14 @@ import { handleLogin } from "../../services/authService";
 export const LoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const login = () => {
     handleLogin(email,password)
+    setLoadingSubmit(true)
   }
 
   return (
@@ -87,8 +89,12 @@ export const LoginScreen = ({ navigation }) => {
 
               {/* BUTTON */}
               <TouchableOpacity style={LoginStyles.button} onPress={login}> 
-                <Text style={LoginStyles.buttonText}>LOG IN</Text>
-              </TouchableOpacity>
+  {loadingSubmit ? (
+    <ActivityIndicator size="small" color={Colors.white} />
+  ) : (
+    <Text style={LoginStyles.buttonText}>LOG IN</Text>
+  )}
+</TouchableOpacity>
 
               {/* UNDERLINE */}
               <View style={LoginStyles.underline}>

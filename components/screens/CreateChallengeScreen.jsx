@@ -9,18 +9,19 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { addChallenge } from "../../services/dbService";
-import { getCurrentUserInfo } from "../../services/authService";
-import { Picker } from "@react-native-picker/picker";
 import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
 import ModalDropdown from "react-native-modal-dropdown";
-import { Keyboard } from 'react-native';
+import { Keyboard } from "react-native";
+import { checkIfUserIsJudge } from "../../services/dbService";
+import { auth } from "../../config/firebase";
 
 export const CreateChallengeScreen = ({ navigation }) => {
   const descriptionInputRef = useRef(null);
@@ -31,22 +32,28 @@ export const CreateChallengeScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isJudge, setIsJudge] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
 
   const fetchCurrentUser = async () => {
-    try {
-      const user = await getCurrentUserInfo();
-      setCurrentUser(user);
-      if (!user) {
-        console.error("No user data returned from getCurrentUserInfo");
-      }
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No user logged in");
+      return;
     }
+    setCurrentUser(user);
+    checkJudgeStatus(user.uid);
+  };
+
+  const checkJudgeStatus = async (userId) => {
+    const judgeStatus = await checkIfUserIsJudge(userId);
+    setIsJudge(judgeStatus);
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchCurrentUser();
+
       return () => {};
     }, [])
   );
@@ -79,6 +86,7 @@ export const CreateChallengeScreen = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
+    setCreateLoading(true);
     if (!title || !description || !category || !image) {
       Alert.alert("Error", "Please fill all fields and select an image");
       return;
@@ -89,7 +97,7 @@ export const CreateChallengeScreen = ({ navigation }) => {
       description,
       category,
       currentUser.uid,
-      currentUser.username,
+      currentUser.displayName,
       image,
       endDate
     );
@@ -98,67 +106,76 @@ export const CreateChallengeScreen = ({ navigation }) => {
       navigation.goBack();
     } else {
       Alert.alert("Error", "Failed to create challenge");
+      setCreateLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Ionicons
-          style={styles.headerIcon}
-          name="chevron-back"
-          size={24}
-          color={Colors.white}
-          onPress={() => navigation.goBack()}
-        />
-        <Text style={styles.headerTitle}>Create Challenge</Text>
-      </View>
-      <ScrollView>
-        <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-          {!image && <Text style={styles.pickImageText}>Pick Image</Text>}
-          {image && <Image source={{ uri: image }} style={styles.image} />}
-        </TouchableOpacity>
+    <>
+      {isJudge && (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Ionicons
+              style={styles.headerIcon}
+              name="chevron-back"
+              size={24}
+              color={Colors.white}
+              onPress={() => navigation.goBack()}
+            />
+            <Text style={styles.headerTitle}>Create Challenge</Text>
+          </View>
+          <ScrollView>
+            <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+              {!image && <Text style={styles.pickImageText}>Pick Image</Text>}
+              {image && <Image source={{ uri: image }} style={styles.image} />}
+            </TouchableOpacity>
 
-        <Text style={styles.label}>Title:</Text>
-        <TextInput style={styles.input} value={title} onChangeText={setTitle} />
-        <Text style={styles.label}>Description:</Text>
-        <TextInput
-          ref={descriptionInputRef}
-          style={styles.descInput}
-          value={description}
-          onChangeText={setDescription}
-          multiline
-          onPress={dismissKeyboard}
-        />
-        <Text style={styles.label}>End Date:</Text>
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={endDate}
-          mode="date"
-          is24Hour={true}
-          display="default"
-          onChange={onDateChange}
-          textColor="white"
-          themeVariant="dark"
-          accentColor={Colors.orange}
-          style={styles.datePicker}
-        />
-        <Text style={styles.label}>Category:</Text>
-        <ModalDropdown
-          options={["Fixed Knives", "Chef Knives", "Forged Knives"]}
-          defaultValue="Select"
-          onSelect={(index, value) => setCategory(value)}
-          textStyle={styles.dropdownText}
-          dropdownStyle={styles.dropdownDropdown}
-          dropdownTextStyle={styles.dropdownDropdownText}
-          dropdownTextHighlightStyle={styles.dropdownTextHighlight}
-        />
+            <Text style={styles.label}>Title:</Text>
+            <TextInput
+              style={styles.input}
+              value={title}
+              onChangeText={setTitle}
+            />
+            <Text style={styles.label}>Description:</Text>
+            <TextInput
+              ref={descriptionInputRef}
+              style={styles.descInput}
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              onPress={dismissKeyboard}
+            />
+            <Text style={styles.label}>End Date:</Text>
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={endDate}
+              mode="date"
+              is24Hour={true}
+              display="default"
+              onChange={onDateChange}
+              textColor="white"
+              themeVariant="dark"
+              accentColor={Colors.orange}
+              style={styles.datePicker}
+            />
+            <Text style={styles.label}>Category:</Text>
+            <ModalDropdown
+              options={["Fixed Knives", "Chef Knives", "Forged Knives"]}
+              defaultValue="Select"
+              onSelect={(index, value) => setCategory(value)}
+              textStyle={styles.dropdownText}
+              dropdownStyle={styles.dropdownDropdown}
+              dropdownTextStyle={styles.dropdownDropdownText}
+              dropdownTextHighlightStyle={styles.dropdownTextHighlight}
+            />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Create</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            {createLoading ? <ActivityIndicator size="small" color={Colors.white} /> : <Text style={styles.buttonText}>Create</Text>}
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      )}
+    </>
   );
 };
 
@@ -276,10 +293,10 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 18,
     color: Colors.white,
-    textAlign: 'center',
+    textAlign: "center",
   },
   dropdownDropdown: {
-    width: '91%', // Adjust the width as necessary
+    width: "91%", // Adjust the width as necessary
     borderColor: Colors.gray,
     borderWidth: 2,
     borderRadius: 3,

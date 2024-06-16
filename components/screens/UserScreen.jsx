@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Colors } from "../Styles"; // Ensure this import path is correct
 import { useFocusEffect } from "@react-navigation/native";
@@ -17,13 +18,14 @@ export const UserScreen = ({ navigation, route }) => {
     const [user, setUser] = useState(route.params.user);
     const [entries, setEntries] = useState([]);
     const [totalEntries, setTotalEntries] = useState(0);
+    const [loading, setLoading] = useState(true);
   
     const fetchData = async () => {
       try {
         const data = await getEntriesByUserId(user.id);
         setEntries(data);
         setTotalEntries(data.length);
-        console.log(user);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -38,6 +40,10 @@ export const UserScreen = ({ navigation, route }) => {
         return () => {};
       }, [route.params.user])
     );
+
+    if (loading) {
+      return <ActivityIndicator size="large" color={Colors.orange} style={{ flex: 1, justifyContent: 'center', backgroundColor: Colors.gray }} />;
+    }
 
   return (
     <>

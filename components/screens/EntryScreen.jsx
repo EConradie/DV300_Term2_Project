@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { enterChallenge } from "../../services/dbService";
 import { getCurrentUserInfo } from "../../services/authService";
@@ -24,6 +25,7 @@ export const EntryScreen = ({ route, navigation }) => {
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const fetchCurrentUser = async () => {
     try {
@@ -58,6 +60,7 @@ export const EntryScreen = ({ route, navigation }) => {
   };
 
   const handleSubmit = async () => {
+    setSubmitLoading(true);
     if (!description || images.length === 0) {
       Alert.alert("Validation", "Please provide a description and at least one image.");
       return;
@@ -79,6 +82,7 @@ export const EntryScreen = ({ route, navigation }) => {
       navigation.goBack();
     } else {
       Alert.alert("Error", "Failed to submit entry.");
+      setSubmitLoading(false);
     }
   };
 
@@ -120,7 +124,7 @@ export const EntryScreen = ({ route, navigation }) => {
         ))}
       </ScrollView>
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit Entry</Text>
+        {submitLoading ? <ActivityIndicator size="small" color={Colors.white} /> : <Text style={styles.buttonText}>Submit Entry</Text>}
       </TouchableOpacity>
     </ScrollView>
   );

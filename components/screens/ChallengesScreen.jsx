@@ -12,19 +12,38 @@ import { getChallenges } from "../../services/dbService";
 import { useFocusEffect } from "@react-navigation/native";
 import { Colors } from "../Styles";
 import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../../config/firebase";
+import { checkIfUserIsJudge } from "../../services/dbService";
 
 export const ChallengesScreen = ({ navigation }) => {
   const [challenges, setChallenges] = useState([]);
+  const [isJudge, setIsJudge] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const fetchCurrentUser = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No user logged in");
+      return;
+    }
+    setCurrentUser(user);
+    checkJudgeStatus(user.uid);
+  };
+
+  const checkJudgeStatus = async (userId) => {
+    const judgeStatus = await checkIfUserIsJudge(userId);
+    setIsJudge(judgeStatus);
+  };
+
+  const fetchChallenges = async () => {
+    const data = await getChallenges();
+    setChallenges(data);
+  };
 
   useFocusEffect(
     useCallback(() => {
-      const fetchChallenges = async () => {
-        const data = await getChallenges();
-        setChallenges(data);
-      };
-
       fetchChallenges();
-
+      fetchCurrentUser();
       return () => {};
     }, [])
   );
@@ -34,15 +53,17 @@ export const ChallengesScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Challenges</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CreateChallenge")}
-          >
-            <Ionicons
-              name={"add-circle-outline"}
-              size={35}
-              color={Colors.orange}
-            />
-          </TouchableOpacity>
+          {isJudge && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CreateChallenge")}
+            >
+              <Ionicons
+                name={"add-circle-outline"}
+                size={35}
+                color={Colors.orange}
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         <ScrollView style={styles.scrollView}>
@@ -112,7 +133,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 70,
-    height: 'auto',
+    height: "auto",
     borderRadius: 10,
   },
   textContainer: {
@@ -124,7 +145,6 @@ const styles = StyleSheet.create({
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     width: 200,
-
   },
   category: {
     fontSize: 14,

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
@@ -23,6 +24,7 @@ export const ProfileScreen = ({ navigation, route }) => {
   const [totalEntries, setTotalEntries] = useState(0);
   const [currentUser, setCurrentUser] = useState();
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(true); 
 
   const updateProfileImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -64,19 +66,24 @@ export const ProfileScreen = ({ navigation, route }) => {
     }
   };
 
-  const fetchPoints = async () => {
-    let totalVotes = 0;
-    entries.forEach((entry) => {
-      totalVotes += entry.votesCount;
-    });
-    setPoints(totalVotes);
-  };
+ 
 
   const fetchEntries = async () => {
     const data = await getEntriesByUserId(auth.currentUser.uid);
     setEntries(data);
     setTotalEntries(data.length);
-    fetchPoints();
+
+    const calculatePoints = async () => {
+      let totalVotes = 0;
+      data.forEach((entry) => {
+        totalVotes += entry.votesCount;
+      })
+      setPoints(totalVotes);
+      setLoading(false); 
+    };
+
+    calculatePoints();
+    
   };
 
   useFocusEffect(
@@ -87,6 +94,10 @@ export const ProfileScreen = ({ navigation, route }) => {
       return () => {};
     }, [])
   );
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.orange} style={{ flex: 1, justifyContent: 'center', backgroundColor: Colors.gray }} />;
+  }
 
   return (
     <>

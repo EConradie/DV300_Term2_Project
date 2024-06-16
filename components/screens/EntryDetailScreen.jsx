@@ -7,32 +7,46 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { addVote, checkUserHasVoted } from "../../services/dbService";
-import { getCurrentUserInfo } from "../../services/authService";
 import { Colors } from "../Styles";
+import { auth } from "../../config/firebase";
 
 export const EntryDetailScreen = ({ route, navigation }) => {
   const { entry, challenge } = route.params;
-  const currentUser = getCurrentUserInfo();
+  const [currentUser, setCurrentUser] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [voteLoading, setVoteLoading] = useState(false);
 
   useEffect(() => {
-    const checkVoteStatus = async () => {
-      const voted = await checkUserHasVoted(currentUser.uid, challenge.id, entry.id);
-      setHasVoted(voted);
+    const fetchUserAndCheckVote = async () => {
+      const user = await auth.currentUser;
+      setCurrentUser(user);
+      if (user) {
+        const voted = await checkUserHasVoted(user.uid, challenge.id, entry.id);
+        setHasVoted(voted);
+        setLoading(false);
+      }
     };
 
-    checkVoteStatus();
-  }, [currentUser.uid, challenge.id, entry.id]);
+    fetchUserAndCheckVote();
+    
+  }, []);
 
   const handleVote = async () => {
+    setVoteLoading(true);
     const success = await addVote(currentUser.uid, challenge.id, entry.id);
     if (success) {
       setHasVoted(true);
       navigation.goBack();
     }
   };
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.orange} style={{ flex: 1, justifyContent: 'center', backgroundColor: Colors.gray }} />;
+  }
 
   return (
     <ScrollView style={styles.scrollContainer}>
@@ -43,7 +57,7 @@ export const EntryDetailScreen = ({ route, navigation }) => {
         <ScrollView horizontal>
           <View style={styles.imageContainer}>
 
-            {entry.images?.map((img, index) => (
+            {entry.images && entry.images.map((img, index) => (
               <Image key={index} source={{ uri: img }} style={styles.fullImage} />
             ))}
 
@@ -52,13 +66,22 @@ export const EntryDetailScreen = ({ route, navigation }) => {
         <View style={styles.votesContainer}>
           <Text style={styles.votes}>Total Votes: {entry.votesCount}</Text>
         </View>
-        <TouchableOpacity
-          style={[styles.button, hasVoted ? styles.disabledButton : null]}
-          onPress={handleVote}
-          disabled={hasVoted}
-        >
-          <Text style={styles.buttonText}>{hasVoted ? "Already Voted" : "VOTE"}</Text>
-        </TouchableOpacity>
+        {voteLoading ? (
+  <TouchableOpacity
+    style={[styles.button, styles.disabledButton]}
+    disabled={true}
+  >
+    <ActivityIndicator color={Colors.white} />
+  </TouchableOpacity>
+) : (
+  <TouchableOpacity
+    style={[styles.button, hasVoted ? styles.disabledButton : null]}
+    onPress={handleVote}
+    disabled={hasVoted}
+  >
+    <Text style={styles.buttonText}>{hasVoted ? "Already Voted" : "VOTE"}</Text>
+  </TouchableOpacity>
+)}
       </View>
     </ScrollView>
   );

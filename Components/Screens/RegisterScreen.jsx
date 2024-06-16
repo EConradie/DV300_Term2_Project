@@ -23,9 +23,11 @@ export const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const register = () => {
     handleRegister(username, email, password)
+    setLoadingSubmit(true)
   }
 
   return (
@@ -106,8 +108,12 @@ export const RegisterScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <TouchableOpacity style={RegisterStyles.button} onPress={register}>
-                <Text style={RegisterStyles.buttonText}>REGISTER</Text>
+              <TouchableOpacity style={LoginStyles.button} onPress={register}>
+                {loadingSubmit ? (
+                  <ActivityIndicator size="small" color={Colors.white} />
+                ) : (
+                  <Text style={LoginStyles.buttonText}>REGISTER</Text>
+                )}
               </TouchableOpacity>
 
               {/* UNDERLINE */}

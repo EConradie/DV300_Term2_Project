@@ -196,6 +196,17 @@ export const getTotalVotesPerUser = async () => {
   }
 };
 
+export const checkIfUserIsJudge = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+    return userDoc.data().judge;
+  } catch (error) {
+    console.error("Error checking if user is judge:", error);
+    return false;
+  }
+};
+
 
 
 

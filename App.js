@@ -36,7 +36,7 @@ function CompetitionsNavigator() {
 function LeaderBoardNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Stack.Screen name="Leaders" component={LeaderboardScreen} />
       <Stack.Screen name="User" component={UserScreen} />
     </Stack.Navigator>
   );
