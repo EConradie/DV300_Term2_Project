@@ -9,7 +9,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { Colors } from "../Styles"; // Ensure this import path is correct
+import { Colors } from "../Styles";
 import { useFocusEffect } from "@react-navigation/native";
 import { getEntriesByUserId } from "../../services/dbService";
 

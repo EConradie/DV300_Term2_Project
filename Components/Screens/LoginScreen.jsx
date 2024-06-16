@@ -21,13 +21,13 @@ export const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const login = () => {
-    handleLogin(email,password)
-    setLoadingSubmit(true)
-  }
+    handleLogin(email, password);
+    setLoadingSubmit(true);
+  };
 
   return (
     <View style={LoginStyles.background}>
@@ -54,7 +54,7 @@ export const LoginScreen = ({ navigation }) => {
                 <TextInput
                   placeholder="Email"
                   placeholderTextColor="white"
-                  onChangeText={newText => setEmail(newText)}
+                  onChangeText={(newText) => setEmail(newText)}
                   style={InputStyle.input}
                 />
               </View>
@@ -72,7 +72,7 @@ export const LoginScreen = ({ navigation }) => {
                   secureTextEntry={!passwordVisible}
                   autoCorrect={false}
                   placeholderTextColor="white"
-                  onChangeText={newText => setPassword(newText)}
+                  onChangeText={(newText) => setPassword(newText)}
                   style={InputStyle.input}
                 />
                 <TouchableOpacity
@@ -88,13 +88,13 @@ export const LoginScreen = ({ navigation }) => {
               </View>
 
               {/* BUTTON */}
-              <TouchableOpacity style={LoginStyles.button} onPress={login}> 
-  {loadingSubmit ? (
-    <ActivityIndicator size="small" color={Colors.white} />
-  ) : (
-    <Text style={LoginStyles.buttonText}>LOG IN</Text>
-  )}
-</TouchableOpacity>
+              <TouchableOpacity style={LoginStyles.button} onPress={login}>
+                {loadingSubmit ? (
+                  <ActivityIndicator size="small" color={Colors.white} />
+                ) : (
+                  <Text style={LoginStyles.buttonText}>LOG IN</Text>
+                )}
+              </TouchableOpacity>
 
               {/* UNDERLINE */}
               <View style={LoginStyles.underline}>

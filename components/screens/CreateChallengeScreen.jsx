@@ -77,7 +77,7 @@ export const CreateChallengeScreen = ({ navigation }) => {
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || endDate;
-    setShowDatePicker(Platform.OS === "ios"); // for iOS, keep the picker open until manually closed
+    setShowDatePicker(Platform.OS === "ios");
     setEndDate(currentDate);
   };
 
