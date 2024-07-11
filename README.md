@@ -21,9 +21,6 @@ Bladel is a competitive knife-making app developed using React Native and manage
 - **Judge Role**: Selected users can become judges and have the authority to create new challenges.
 - **Leaderboard**: Displays users with the highest total points.
 - **Profile Management**: Users can view their entries and update their profile pictures.
-- **Real-time Challenge Timers**: Live countdowns for ongoing challenges (future feature).
-- **Advanced Filtering**: Enhanced categorization and filtering of challenges (planned enhancement).
-- **Community Forums**: A space for users to discuss techniques, challenges, and other topics (upcoming feature).
 
 ## Tech Stack
 
@@ -33,10 +30,18 @@ Bladel is a competitive knife-making app developed using React Native and manage
 
 ## Database Structure
 
-- **Challenges**: Main collection with details of each challenge.
-  - **Entries**: Subcollection under each challenge for user submissions.
-  - **Votes**: Subcollection under each entry to store votes.
-- **Users**: Collection for storing user profiles and authentication details.
+![Data structure](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/datastructure.png?raw=true)
+
+## Mockups
+
+![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup.png?raw=true)
+![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup2.png?raw=true)
+![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup3.png?raw=true)
+![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup4.png?raw=true)
+![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup5.png?raw=true)
+
+
+
 
 ## Getting Started
 
