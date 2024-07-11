@@ -66,11 +66,37 @@ npm install
 ```
 ### Running the App
 
-3. **Start the Expo development server**:
+3. **Create and configure the Firebase configuration file:**
+- Create a file named firebase.js inside a config directory in your project.
+- Open config/firebase.js and enter your Firebase configuration as follows:
+```
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+```
+- Remember to replace YOUR_API_KEY, YOUR_AUTH_DOMAIN, etc., with your actual Firebase project settings.
+
+5. **Start the Expo development server**:
 ```
 expo start
 ```
-4. **Open the app on a physical device or emulator**:
+5. **Open the app on a physical device or emulator**:
 - Scan the QR code with the Expo Go app on Android or iOS for real-time testing.
 - Use Android Studio or iOS Simulator to run the app in a virtual device environment.
 
