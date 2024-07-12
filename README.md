@@ -40,8 +40,9 @@ Bladel is a competitive knife-making app developed using React Native and manage
 ![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup4.png?raw=true)
 ![Mockup](https://github.com/EConradie/DV300_Term2_Project/blob/main/assets/readme/mockup5.png?raw=true)
 
+## Demonstration Video
 
-
+https://drive.google.com/file/d/1HMyLIBtGYFiox-HhXtCEFA8Wc9nj3ML3/view?usp=drive_link
 
 ## Getting Started
 
